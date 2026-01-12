@@ -17,12 +17,7 @@ const LandingPage = ({ onBrowse }) => {
           <span className="italic text-[#6B2E2E]">spending time with</span>
         </h1>
 
-        {/* Description */}
-        <p className="text-lg text-[#4A4643] max-w-2xl mx-auto mb-10 leading-relaxed">
-          Explore a carefully curated collection of fiction, technology,
-          business, and self-help books. Designed for readers who enjoy
-          clarity, focus, and thoughtful browsing.
-        </p>
+       
 
         {/* CTA */}
         <div className="flex justify-center">

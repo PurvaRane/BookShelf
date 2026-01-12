@@ -13,6 +13,7 @@ import Button from '../common/Button';
 
 const Home = ({ initialCategory = null, onNavigate }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   
   // State
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,6 +21,15 @@ const Home = ({ initialCategory = null, onNavigate }) => {
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1500 });
   const [sortOption, setSortOption] = useState('');
   const [selectedBook, setSelectedBook] = useState(null); // Modal State
+
+  // Track scroll for dynamic positioning
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Effect to sync initialCategory if it changes
   useEffect(() => {
@@ -62,7 +72,9 @@ const Home = ({ initialCategory = null, onNavigate }) => {
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col space-y-8">
         {/* Header Section (Step 1: Visual Anchor) */}
-        <div className="bg-white py-6 px-8 rounded-lg border border-[#E3DDD6] shadow-sm flex flex-col md:flex-row md:items-end justify-between gap-6 sticky top-20 z-40 mb-8">
+        <div className={`bg-white py-6 px-8 rounded-lg border border-[#E3DDD6] shadow-sm flex flex-col md:flex-row md:items-end justify-between gap-6 sticky z-40 mb-8 transition-all duration-300 ${
+          isScrolled ? 'top-14' : 'top-20'
+        }`}>
            {/* Left: Title & Count */}
            <div className="flex-1">
             <h2 className="text-3xl font-serif text-[#1F2933] mb-2 tracking-tight">The Library</h2>
@@ -120,7 +132,8 @@ const Home = ({ initialCategory = null, onNavigate }) => {
         <div className="flex flex-col lg:flex-row gap-8 items-start relative">
           {/* Sidebar Filters */}
           <div className={`
-             lg:w-72 flex-shrink-0 lg:sticky lg:top-40 transition-all duration-300
+             lg:w-72 flex-shrink-0 lg:sticky transition-all duration-300
+             ${isScrolled ? 'lg:top-32' : 'lg:top-40'}
              ${isMobileMenuOpen ? 'fixed inset-0 z-50 bg-white p-6 overflow-y-auto' : 'hidden'} 
              lg:block
           `}>

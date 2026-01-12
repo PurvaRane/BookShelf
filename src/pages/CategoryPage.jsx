@@ -19,7 +19,7 @@ const CategoryPage = ({ onSelectCategory }) => {
             Start Your Journey
           </span>
           <h2 className="text-5xl font-serif font-bold text-[#1F2937] mb-6">
-            Curated Collections
+           Collections
           </h2>
           <p className="text-xl text-[#57534E] font-light max-w-2xl mx-auto italic">
             "A room without books is like a body without a soul."
