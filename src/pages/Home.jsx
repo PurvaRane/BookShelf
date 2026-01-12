@@ -163,14 +163,14 @@ const Home = ({ initialCategory = null, onNavigate }) => {
                    onBookClick={setSelectedBook}
                  />
              ) : (
-                 <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-xl border border-gray-100 shadow-sm">
-                    <div className="bg-gray-50 rounded-full p-6 mb-4">
-                      <svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-xl border border-[var(--color-paper-border)] shadow-sm">
+                    <div className="bg-[var(--color-paper-soft)] rounded-full p-6 mb-4">
+                      <svg className="w-12 h-12 text-[var(--color-text-faint)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">No books found</h3>
-                    <p className="text-gray-500 max-w-sm mx-auto">
+                    <h3 className="text-xl font-bold text-[var(--color-text-main)] mb-2">No books found</h3>
+                    <p className="text-[var(--color-text-muted)] max-w-sm mx-auto">
                       We couldn't find any books matching "{debouncedSearchQuery}". 
                       <br/>Try searching for something else or adjusting your filters.
                     </p>

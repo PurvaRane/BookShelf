@@ -28,7 +28,7 @@ const CategoryPage = ({ onSelectCategory }) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {CATEGORIES.map((category) => {
-            const meta = categoryMeta[category.name] || { accent: 'border-gray-400', icon: '📚' };
+            const meta = categoryMeta[category.name] || { accent: 'border-[var(--color-paper-border)]', icon: '📚' };
             
             return (
               <button

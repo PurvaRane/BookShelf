@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const RangeSlider = ({ min, max, value, onChange }) => {
-  const [minVal, setMinVal] = useState(value.min);
   const [maxVal, setMaxVal] = useState(value.max);
-  const minValRef = useRef(value.min);
   const maxValRef = useRef(value.max);
   const range = useRef(null);
 
@@ -13,83 +11,44 @@ const RangeSlider = ({ min, max, value, onChange }) => {
     [min, max]
   );
 
-  // Set width of the range to decrease from the left side
+  // Set width of the range based on max value only (min is always 0)
   useEffect(() => {
-    const minPercent = getPercent(minVal);
-    const maxPercent = getPercent(maxValRef.current);
-
-    if (range.current) {
-      range.current.style.left = `${minPercent}%`;
-      range.current.style.width = `${maxPercent - minPercent}%`;
-    }
-  }, [minVal, getPercent]);
-
-  // Set width of the range to decrease from the right side
-  useEffect(() => {
-    const minPercent = getPercent(minValRef.current);
     const maxPercent = getPercent(maxVal);
 
     if (range.current) {
-      range.current.style.width = `${maxPercent - minPercent}%`;
+      range.current.style.left = '0%';
+      range.current.style.width = `${maxPercent}%`;
     }
   }, [maxVal, getPercent]);
 
   // Sync with prop updates
   useEffect(() => {
-    // Only update internal state if props differ significantly to avoid loops
-    // But simplistic approach: just set them
-    if (value.min !== minValRef.current || value.max !== maxValRef.current) {
-        setMinVal(value.min);
-        setMaxVal(value.max);
-        minValRef.current = value.min;
-        maxValRef.current = value.max;
-    }
-  }, [value, minVal, maxVal]); // Adding minVal/maxVal to dependency might be tricky, checking logic..
-  // Actually, we want to update internal state ONLY when parent changes it.
-  // But internal changes trigger parent update.
-  // Let's refine:
-  useEffect(() => {
-      setMinVal(value.min);
       setMaxVal(value.max);
-      minValRef.current = value.min;
       maxValRef.current = value.max;
-  }, [value.min, value.max]);
+  }, [value.max]);
 
   return (
     <div className="relative w-full h-12 flex items-center justify-center">
-      <input
-        type="range"
-        min={min}
-        max={max}
-        value={minVal}
-        onChange={(event) => {
-          const value = Math.min(Number(event.target.value), maxVal - 1);
-          setMinVal(value);
-          minValRef.current = value;
-          onChange({ min: value, max: maxVal });
-        }}
-        className="thumb thumb--left pointer-events-none absolute h-0 w-full outline-none z-[3]"
-        style={{ zIndex: minVal > max - 100 && "5" }}
-      />
+      {/* Only one slider for max value - min is fixed at 0 */}
       <input
         type="range"
         min={min}
         max={max}
         value={maxVal}
         onChange={(event) => {
-          const value = Math.max(Number(event.target.value), minVal + 1);
+          const value = Number(event.target.value);
           setMaxVal(value);
           maxValRef.current = value;
-          onChange({ min: minVal, max: value });
+          onChange({ min: 0, max: value }); // min is always 0
         }}
         className="thumb thumb--right pointer-events-none absolute h-0 w-full outline-none z-[4]"
       />
 
       <div className="relative w-full">
-        <div className="absolute rounded-md h-2 w-full bg-gray-200 z-[1]" />
+        <div className="absolute rounded-md h-2 w-full bg-[#E3DDD6] z-[1]" />
         <div
           ref={range}
-          className="absolute rounded-md h-2 bg-primary z-[2]"
+          className="absolute rounded-md h-2 bg-[#5B2C2C] z-[2]"
         />
       </div>
 
@@ -98,7 +57,7 @@ const RangeSlider = ({ min, max, value, onChange }) => {
           -webkit-appearance: none;
           -webkit-tap-highlight-color: transparent;
           background-color: white;
-          border: 2px solid #6366f1; /* primary color */
+          border: 2px solid #5B2C2C;
           border-radius: 50%;
           cursor: pointer;
           height: 20px;
@@ -106,17 +65,26 @@ const RangeSlider = ({ min, max, value, onChange }) => {
           margin-top: 4px;
           pointer-events: all;
           position: relative;
+          box-shadow: 0 1px 3px rgba(91, 44, 44, 0.2);
+        }
+        .thumb::-webkit-slider-thumb:hover {
+          background-color: #FAF7F3;
+          border-color: #5B2C2C;
         }
         .thumb::-moz-range-thumb {
           background-color: white;
-          border: 2px solid #6366f1;
+          border: 2px solid #5B2C2C;
           border-radius: 50%;
           cursor: pointer;
           height: 20px;
           width: 20px;
-          margin-top: 4px;
           pointer-events: all;
           position: relative;
+          box-shadow: 0 1px 3px rgba(91, 44, 44, 0.2);
+        }
+        .thumb::-moz-range-thumb:hover {
+          background-color: #FAF7F3;
+          border-color: #5B2C2C;
         }
       `}</style>
     </div>
