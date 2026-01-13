@@ -38,7 +38,7 @@ const BookDetailsModal = ({ book, onClose }) => {
   if (!book) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4 sm:p-6">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-[#6B2E2E]/40 backdrop-blur-sm transition-opacity"
@@ -48,20 +48,24 @@ const BookDetailsModal = ({ book, onClose }) => {
       {/* Modal Content */}
       <div 
         ref={modalRef}
-        className="relative bg-[#FAF7F3] w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-sm shadow-2xl flex flex-col md:flex-row overflow-hidden animate-fade-in-up border border-[#E3DDD6]"
+        className="relative bg-[#FAF7F3] w-full md:max-w-4xl max-h-[95vh] md:max-h-[90vh] overflow-y-auto rounded-t-xl md:rounded-sm shadow-2xl flex flex-col md:flex-row overflow-hidden animate-fade-in-up border-t md:border border-[#E3DDD6]"
       >
-        {/* Close Button Mobile */}
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 bg-white/80 rounded-full md:hidden text-[#5B2C2C]"
-        >
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+        {/* Drag Handle & Close Button Mobile */}
+        <div className="sticky top-0 bg-[#FAF7F3]/95 backdrop-blur-sm flex flex-col items-center pt-3 pb-2 border-b border-[#E3DDD6] z-10 md:hidden">
+          <div className="w-12 h-1 bg-[#E3DDD6] rounded-full mb-2"></div>
+          <button 
+            onClick={onClose}
+            className="absolute top-3 right-4 z-10 p-2 bg-white/80 rounded-full text-[#5B2C2C] touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+            aria-label="Close"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
         {/* Image Section */}
-        <div className="w-full md:w-2/5 h-64 md:h-auto relative bg-[#FAF7F3] flex-shrink-0 p-8 flex items-center justify-center">
+        <div className="w-full md:w-2/5 h-64 md:h-auto relative bg-[#FAF7F3] flex-shrink-0 p-6 md:p-8 flex items-center justify-center">
           <img 
             src={book.image} 
             alt={book.title}
@@ -77,7 +81,7 @@ const BookDetailsModal = ({ book, onClose }) => {
         </div>
 
         {/* Details Section */}
-        <div className="flex-1 p-6 md:p-10 flex flex-col bg-white">
+        <div className="flex-1 p-5 md:p-10 flex flex-col bg-white">
           <div className="flex justify-between items-start mb-4">
              <div>
                <span className="inline-block px-3 py-1 bg-[#F6F1EB] text-[#6B2E2E] border border-[#E8E4DD] rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
@@ -117,8 +121,8 @@ const BookDetailsModal = ({ book, onClose }) => {
           </div>
 
           {/* Footer Actions */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 mt-auto pt-2">
-            <div className="text-3xl font-serif font-bold text-[#2F5D50] mr-auto">
+          <div className="flex flex-col sm:flex-row items-center gap-4 mt-auto pt-4 md:pt-2 border-t md:border-t-0 border-[#E3DDD6] md:border-transparent">
+            <div className="text-2xl md:text-3xl font-serif font-bold text-[#2F5D50] w-full sm:w-auto sm:mr-auto text-center sm:text-left">
               {formatPrice(book.price)}
             </div>
             
@@ -126,11 +130,12 @@ const BookDetailsModal = ({ book, onClose }) => {
               {/* Wishlist Button (Visual) */}
               <button 
                 onClick={handleWishlistToggle}
-                className={`p-3 border rounded-sm transition-colors ${
+                className={`p-3 border rounded-sm transition-colors touch-manipulation min-w-[60px] min-h-[48px] md:min-w-0 md:min-h-0 flex items-center justify-center ${
                   inWishlist 
                     ? 'border-[#6B2E2E] text-[#6B2E2E] bg-[#6B2E2E]/5' 
-                    : 'border-[#E8E4DD] text-[#A8A29E] hover:text-[#6B2E2E] hover:border-[#6B2E2E]'
+                    : 'border-[#E8E4DD] text-[#A8A29E] active:text-[#6B2E2E] active:border-[#6B2E2E] md:hover:text-[#6B2E2E] md:hover:border-[#6B2E2E]'
                 }`}
+                aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
               >
                 <svg className={`w-6 h-6 ${inWishlist ? 'fill-current' : 'fill-none'}`} viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -139,7 +144,7 @@ const BookDetailsModal = ({ book, onClose }) => {
 
               <Button 
                 size="lg" 
-                className={`flex-1 sm:w-48 font-bold tracking-widest uppercase rounded-sm ${book.inStock ? 'bg-[#1F2937] hover:bg-[#6B2E2E] text-white shadow-lg' : 'bg-[var(--color-paper-soft)] text-[var(--color-text-faint)]'}`}
+                className={`flex-1 sm:w-48 font-bold tracking-widest uppercase rounded-sm touch-manipulation min-h-[48px] md:min-h-0 ${book.inStock ? 'bg-[#1F2937] active:bg-[#6B2E2E] md:hover:bg-[#6B2E2E] text-white shadow-lg' : 'bg-[var(--color-paper-soft)] text-[var(--color-text-faint)]'}`}
                 disabled={!book.inStock}
                 onClick={() => {
                    if (book.inStock) {

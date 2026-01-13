@@ -48,3 +48,18 @@ p {
   line-height: 1.7;
   color: var(--color-text-muted);
 }
+
+/* SCROLLBAR HIDE UTILITY */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* TOUCH MANIPULATION - Better mobile performance */
+.touch-manipulation {
+  touch-action: manipulation;
+}

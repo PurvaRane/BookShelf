@@ -37,7 +37,7 @@ const Navbar = ({
 
   return (
     <nav className={`sticky top-0 z-50 transition-all duration-300 border-b border-[#B89B5E]/30 ${
-      isScrolledProp ? 'bg-[#5B2C2C]/95 backdrop-blur-md shadow-lg py-1 md:py-2' : 'bg-[#5B2C2C] py-2 md:py-4'
+      isScrolledProp ? 'bg-[#5B2C2C]/95 backdrop-blur-md shadow-lg py-1.5 md:py-2' : 'bg-[#5B2C2C] py-2.5 md:py-4'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center bg-transparent">
@@ -65,7 +65,7 @@ const Navbar = ({
             {/* Orders Tab - Deskop Label + Mobile Icon */}
             <button
                onClick={() => setIsOrdersOpen(true)}
-               className="flex items-center gap-1 md:gap-2 p-2 rounded-md hover:bg-[#FAF7F3]/10 transition-colors group relative"
+               className="flex items-center gap-1 md:gap-2 p-2 rounded-md active:bg-[#FAF7F3]/10 md:hover:bg-[#FAF7F3]/10 transition-colors group relative touch-manipulation min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 justify-center"
             >
                <svg className="w-5 h-5 text-[#FAF7F3] group-hover:text-[#B89B5E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -81,7 +81,7 @@ const Navbar = ({
             {/* Recently Viewed Toggle (Mobile Only) */}
             <button
                onClick={onHistoryClick}
-               className="xl:hidden p-2 rounded-md hover:bg-[#FAF7F3]/10 transition-colors group"
+               className="xl:hidden p-2 rounded-md active:bg-[#FAF7F3]/10 md:hover:bg-[#FAF7F3]/10 transition-colors group touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
                title="History & Recommendations"
             >
               <svg
@@ -103,7 +103,7 @@ const Navbar = ({
              <div className={`relative transition-all duration-300 ${isScrolledProp ? 'opacity-100 translate-x-0' : 'md:opacity-0 md:translate-x-4 md:pointer-events-none'}`} ref={searchContainerRef}>
                <button 
                  onClick={() => setShowSearchOverlay(!showSearchOverlay)}
-                 className={`p-2 rounded-full transition-all cursor-pointer border-none bg-transparent ${showSearchOverlay ? 'bg-[#FAF7F3] text-[#5B2C2C]' : 'text-[#FAF7F3] hover:bg-[#FAF7F3]/10'}`}
+                 className={`p-2 rounded-full transition-all cursor-pointer border-none bg-transparent touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center ${showSearchOverlay ? 'bg-[#FAF7F3] text-[#5B2C2C]' : 'text-[#FAF7F3] active:bg-[#FAF7F3]/10 md:hover:bg-[#FAF7F3]/10'}`}
                >
                  <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -112,55 +112,69 @@ const Navbar = ({
 
                {/* Integrated Search Overlay */}
                {showSearchOverlay && (
-                 <div className="fixed md:absolute inset-x-0 top-0 md:top-full md:right-0 md:left-auto md:mt-2 w-full md:w-[400px] h-full md:h-auto bg-white md:rounded-lg shadow-2xl border-b md:border border-[#E3DDD6] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 flex flex-col z-[60]">
-                   <div className="p-4 md:p-3 bg-white">
-                      <div className="flex md:hidden justify-between items-center mb-6">
-                         <h2 className="font-serif text-xl text-[#5B2C2C]">Search Library</h2>
-                         <button onClick={() => setShowSearchOverlay(false)} className="p-2 text-[#9A9895]">✕</button>
-                      </div>
-                      <div className="relative">
-                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                           <svg className="h-5 w-5 text-[#9A9895]" viewBox="0 0 20 20" fill="currentColor">
-                             <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                           </svg>
+                 <>
+                   <div 
+                     className="fixed inset-0 bg-black/20 z-[59] md:hidden"
+                     onClick={() => setShowSearchOverlay(false)}
+                   />
+                   <div className="fixed md:absolute inset-x-0 top-0 md:top-full md:right-0 md:left-auto md:mt-2 w-full md:w-[400px] h-full md:h-auto bg-white md:rounded-lg shadow-2xl border-b md:border border-[#E3DDD6] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 flex flex-col z-[60]">
+                      <div className="p-4 md:p-3 bg-white">
+                         <div className="flex md:hidden justify-between items-center mb-6">
+                            <h2 className="font-serif text-xl text-[#5B2C2C]">Search Library</h2>
+                            <button 
+                              onClick={() => setShowSearchOverlay(false)} 
+                              className="p-2 text-[#9A9895] active:text-[#5B2C2C] transition-colors touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+                              aria-label="Close search"
+                            >
+                              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
                          </div>
-                         <Input
-                           autoFocus
-                           placeholder="Search by title or author..."
-                           value={searchQuery}
-                           onChange={(e) => setSearchQuery(e.target.value)}
-                           className="pl-10 py-3 md:py-2 bg-[#FAF7F3] border-[#E3DDD6] focus:border-[#5B2C2C] focus:ring-1 focus:ring-[#5B2C2C] transition-all text-sm w-full"
-                         />
+                         <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                              <svg className="h-5 w-5 text-[#9A9895]" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                              </svg>
+                            </div>
+                            <Input
+                              autoFocus
+                              placeholder="Search by title or author..."
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              className="pl-10 py-3 md:py-2 bg-[#FAF7F3] border-[#E3DDD6] focus:border-[#5B2C2C] focus:ring-1 focus:ring-[#5B2C2C] transition-all text-sm w-full"
+                            />
+                         </div>
                       </div>
-                   </div>
 
-                   {searchSuggestions.length > 0 && (
-                     <div className="border-t border-[#E3DDD6] flex-grow overflow-y-auto bg-white">
-                        <p className="px-4 py-2 text-[10px] text-[#9A9895] bg-[#FAF7F3] border-b border-[#E3DDD6] font-bold uppercase tracking-widest">
-                          Suggestions
-                        </p>
-                        {searchSuggestions.map((item, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => {
-                              setSearchQuery(item.value);
-                              setShowSearchOverlay(false);
-                            }}
-                            className="w-full text-left px-4 py-4 md:py-3 text-sm text-[#1F2933] hover:bg-[#FAF7F3] transition-colors border-b border-[#E3DDD6] last:border-b-0"
-                          >
-                            {item.value}
-                          </button>
-                        ))}
-                     </div>
-                   )}
-                 </div>
+                      {searchSuggestions.length > 0 && (
+                        <div className="border-t border-[#E3DDD6] flex-grow overflow-y-auto bg-white max-h-[60vh] md:max-h-none">
+                           <p className="px-4 py-2 text-[10px] text-[#9A9895] bg-[#FAF7F3] border-b border-[#E3DDD6] font-bold uppercase tracking-widest sticky top-0">
+                             Suggestions
+                           </p>
+                           {searchSuggestions.map((item, idx) => (
+                             <button
+                               key={idx}
+                               onClick={() => {
+                                 setSearchQuery(item.value);
+                                 setShowSearchOverlay(false);
+                               }}
+                               className="w-full text-left px-4 py-4 md:py-3 text-sm text-[#1F2933] active:bg-[#FAF7F3] md:hover:bg-[#FAF7F3] transition-colors border-b border-[#E3DDD6] last:border-b-0 touch-manipulation min-h-[48px] md:min-h-0 flex items-center"
+                             >
+                               {item.value}
+                             </button>
+                           ))}
+                        </div>
+                      )}
+                    </div>
+                 </>
                )}
              </div>
 
              {/* Wishlist */}
              <button 
                onClick={() => setIsWishlistOpen(true)}
-               className="relative group p-2 rounded-full hover:bg-[#FAF7F3]/10 transition-all cursor-pointer border-none bg-transparent"
+               className="relative group p-2 rounded-full active:bg-[#FAF7F3]/10 md:hover:bg-[#FAF7F3]/10 transition-all cursor-pointer border-none bg-transparent touch-manipulation min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
              >
                <svg className="w-5 h-5 md:w-6 md:h-6 text-[#FAF7F3] group-hover:text-[#B89B5E] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -175,7 +189,7 @@ const Navbar = ({
              {/* Cart */}
              <button 
                onClick={() => setIsCartOpen(true)}
-               className="relative group p-2 rounded-full hover:bg-[#FAF7F3]/10 transition-all cursor-pointer border-none bg-transparent"
+               className="relative group p-2 rounded-full active:bg-[#FAF7F3]/10 md:hover:bg-[#FAF7F3]/10 transition-all cursor-pointer border-none bg-transparent touch-manipulation min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
              >
                <svg className="w-5 h-5 md:w-6 md:h-6 text-[#FAF7F3] group-hover:text-[#B89B5E] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />

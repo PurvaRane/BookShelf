@@ -3,11 +3,27 @@ import { useStore } from '../../context/StoreContext';
 import { formatPrice } from '../../utils/formatPrice';
 
 const ProductCard = ({ book, onCardClick }) => {
-  const { title, author, category, price, rating, image, inStock } = book;
+  // Guard: Return early if book is invalid
+  if (!book || typeof book !== 'object') {
+    return null;
+  }
+
+  // Destructure with fallback values to prevent undefined errors
+  const { 
+    title = 'Untitled', 
+    author = 'Unknown Author', 
+    category = 'Uncategorized', 
+    price = 0, 
+    rating = 0, 
+    image = '', 
+    inStock = false 
+  } = book;
+
   const { addToCart, addToWishlist, removeFromWishlist, wishlist, cart } = useStore();
   
-  const inCart = cart.some(item => item.id === book.id);
-  const inWishlist = wishlist.some(item => item.id === book.id);
+  // Guard: Ensure cart and wishlist are arrays before using .some()
+  const inCart = Array.isArray(cart) && cart.some(item => item?.id === book.id);
+  const inWishlist = Array.isArray(wishlist) && wishlist.some(item => item?.id === book.id);
 
   const handleWishlistToggle = (e) => {
     e.stopPropagation();
@@ -21,21 +37,31 @@ const ProductCard = ({ book, onCardClick }) => {
   return (
     <div 
       onClick={() => onCardClick && onCardClick(book)}
-      className="group relative bg-white rounded-sm border border-[#E3DDD6] shadow-sm active:bg-[#FAF7F3] md:hover:shadow-lg transition-all duration-300 flex flex-col h-full cursor-pointer md:hover:-translate-y-1 overflow-hidden"
+      className="group relative bg-white rounded-sm border border-[#E3DDD6] shadow-sm active:bg-[#FAF7F3] md:hover:shadow-lg transition-all duration-300 flex flex-col h-full cursor-pointer md:hover:-translate-y-1 overflow-hidden touch-manipulation"
     >
       {/* Book Cover Area */}
       <div className="relative aspect-[3/4] bg-[#FAF7F3] p-3 md:p-4 flex items-center justify-center overflow-hidden border-b border-[#E3DDD6]">
         
         {/* The Book Image */}
-        <img
-          src={image}
-          alt={title}
-          className={`
-            w-3/4 h-auto shadow-md transform transition-transform duration-500 md:group-hover:scale-[1.03]
-            ${!inStock ? 'opacity-50 grayscale' : ''}
-          `}
-          loading="lazy"
-        />
+        {image ? (
+          <img
+            src={image}
+            alt={title}
+            className={`
+              w-3/4 h-auto shadow-md transform transition-transform duration-500 md:group-hover:scale-[1.03]
+              ${!inStock ? 'opacity-50 grayscale' : ''}
+            `}
+            loading="lazy"
+            onError={(e) => {
+              // Fallback: Hide broken images gracefully
+              e.target.style.display = 'none';
+            }}
+          />
+        ) : (
+          <div className="w-3/4 h-auto flex items-center justify-center text-[#9A9895] text-xs">
+            No Image
+          </div>
+        )}
         
         {/* Out of Stock Overlay */}
         {!inStock && (
@@ -49,7 +75,8 @@ const ProductCard = ({ book, onCardClick }) => {
         {/* Wishlist Action */}
         <button
           onClick={handleWishlistToggle}
-          className="absolute top-2 right-2 p-2.5 md:p-2 rounded-full bg-white/40 md:bg-transparent md:hover:bg-white/80 transition-colors z-10"
+          className="absolute top-2 right-2 p-2.5 md:p-2 rounded-full bg-white/40 md:bg-transparent active:bg-white/80 md:hover:bg-white/80 transition-colors z-10 touch-manipulation min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 flex items-center justify-center"
+          aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
         >
           <svg 
             className={`w-5 h-5 transition-colors ${inWishlist ? 'fill-[#5B2C2C] text-[#5B2C2C]' : 'fill-none text-[var(--color-text-faint)] md:hover:text-[#5B2C2C]'}`} 
@@ -98,11 +125,12 @@ const ProductCard = ({ book, onCardClick }) => {
               if (inStock) addToCart(book);
             }}
             className={`
-              px-2.5 py-2 md:px-3 md:py-1.5 rounded-sm text-[10px] font-bold tracking-tight transition-all uppercase border
+              px-3 py-2.5 md:px-3 md:py-1.5 rounded-sm text-[10px] font-bold tracking-tight transition-all uppercase border touch-manipulation min-h-[44px] md:min-h-0 flex items-center justify-center
               ${inStock 
                 ? 'text-[#5B2C2C] bg-[#FAF7F3] border-[#E3DDD6] active:bg-[#5B2C2C] active:text-white md:hover:bg-[#5B2C2C] md:hover:text-white' 
                 : 'text-[#9A9895] bg-transparent border-transparent cursor-not-allowed'}
             `}
+            aria-label={inStock ? (inCart ? "Add another to cart" : "Add to cart") : "Out of stock"}
           >
             {inStock ? (inCart ? 'Again' : 'Add') : 'Out'}
           </button>

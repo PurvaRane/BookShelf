@@ -23,21 +23,22 @@ const OrdersDrawer = () => {
       {/* Drawer Panel */}
       <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col transform transition-transform animate-slide-in-right">
         {/* Header */}
-        <div className="p-6 border-b border-[#E3DDD6] flex items-center justify-between bg-[#FAF7F3]">
-          <div className="flex items-center gap-3">
+        <div className="p-4 md:p-6 border-b border-[#E3DDD6] flex items-center justify-between bg-[#FAF7F3]">
+          <div className="flex items-center gap-2 md:gap-3">
             <div className="p-2 bg-[#5B2C2C] text-white rounded-md">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
             </div>
             <div>
-                <h2 className="text-xl font-serif font-bold text-[#1F2933]">Your Orders</h2>
+                <h2 className="text-lg md:text-xl font-serif font-bold text-[#1F2933]">Your Orders</h2>
                 <p className="text-[10px] uppercase tracking-widest text-[#6B6A67] font-bold">Purchase History</p>
             </div>
           </div>
           <button 
              onClick={() => setIsOrdersOpen(false)}
-             className="p-2 text-[#9A9895] hover:text-[#1F2933] hover:bg-[#FAF7F3] rounded-full transition-colors"
+             className="p-2 text-[#9A9895] active:text-[#1F2933] md:hover:text-[#1F2933] active:bg-[#FAF7F3] md:hover:bg-[#FAF7F3] rounded-full transition-colors touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+             aria-label="Close orders"
           >
              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -46,7 +47,7 @@ const OrdersDrawer = () => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 bg-[#FDFBF9]">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-[#FDFBF9] scrollbar-hide">
           {orders.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
                <div className="w-24 h-24 bg-[#FAF7F3] rounded-full flex items-center justify-center border border-[#E3DDD6]">
@@ -56,7 +57,7 @@ const OrdersDrawer = () => {
                  <h3 className="text-lg font-serif font-bold text-[#1F2933]">No orders yet</h3>
                  <p className="text-sm text-[#6B6A67] mt-2">When you purchase books, they will appear here as beautiful additions to your collection.</p>
                </div>
-               <Button onClick={() => setIsOrdersOpen(false)} variant="primary" className="px-8 bg-[#5B2C2C]">
+               <Button onClick={() => setIsOrdersOpen(false)} variant="primary" className="px-8 bg-[#5B2C2C] touch-manipulation min-h-[48px] md:min-h-0">
                  Explore the Library
                </Button>
             </div>
@@ -104,7 +105,7 @@ const OrdersDrawer = () => {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-[#E3DDD6] bg-[#FAF7F3]">
+        <div className="p-4 md:p-6 border-t border-[#E3DDD6] bg-[#FAF7F3]">
             <p className="text-[10px] text-center text-[#9A9895] uppercase tracking-widest font-bold">
                 Thank you for choosing BookShelf
             </p>

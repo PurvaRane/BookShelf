@@ -2,7 +2,9 @@ import React from 'react';
 import ProductCard from './ProductCard';
 
 const ProductGrid = ({ books, onBookClick }) => {
-  if (books.length === 0) {
+  // Guard: Early return for invalid or empty books array
+  // WHY: Prevents rendering errors and provides friendly empty state
+  if (!Array.isArray(books) || books.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
         <div className="bg-[var(--color-paper-soft)] rounded-full p-6 mb-4">
@@ -19,14 +21,16 @@ const ProductGrid = ({ books, onBookClick }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-      {books.map((book) => (
-        <ProductCard 
-          key={book.id} 
-          book={book} 
-          onCardClick={onBookClick}
-        />
-      ))}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+      {books
+        .filter(book => book && book.id) // Guard: Filter out invalid books
+        .map((book) => (
+          <ProductCard 
+            key={book.id} 
+            book={book} 
+            onCardClick={onBookClick}
+          />
+        ))}
     </div>
   );
 };

@@ -54,29 +54,60 @@ export const StoreProvider = ({ children }) => {
   const [isOrdersOpen, setIsOrdersOpen] = useState(false);
 
   // --- Persistence ---
+  // WHY: Save state to localStorage on every change for persistence across page refreshes
+  // Error handling: Wrap in try-catch to prevent crashes if localStorage is unavailable
   useEffect(() => {
-    localStorage.setItem('bookshelf_cart', JSON.stringify(cart));
+    try {
+      localStorage.setItem('bookshelf_cart', JSON.stringify(cart));
+    } catch (error) {
+      // Silently fail if localStorage is unavailable (e.g., private browsing)
+      console.warn('Failed to save cart to localStorage:', error);
+    }
   }, [cart]);
 
   useEffect(() => {
-    localStorage.setItem('bookshelf_wishlist', JSON.stringify(wishlist));
+    try {
+      localStorage.setItem('bookshelf_wishlist', JSON.stringify(wishlist));
+    } catch (error) {
+      console.warn('Failed to save wishlist to localStorage:', error);
+    }
   }, [wishlist]);
 
   useEffect(() => {
-    localStorage.setItem('bookshelf_orders', JSON.stringify(orders));
+    try {
+      localStorage.setItem('bookshelf_orders', JSON.stringify(orders));
+    } catch (error) {
+      console.warn('Failed to save orders to localStorage:', error);
+    }
   }, [orders]);
 
   useEffect(() => {
-    localStorage.setItem('recently_viewed_books', JSON.stringify(recentlyViewed));
+    try {
+      localStorage.setItem('recently_viewed_books', JSON.stringify(recentlyViewed));
+    } catch (error) {
+      console.warn('Failed to save recently viewed to localStorage:', error);
+    }
   }, [recentlyViewed]);
 
   // --- Cart Actions ---
   const addToCart = (book) => {
+    // Guard: Only proceed if book is valid
+    if (!book || typeof book !== 'object' || !book.id) {
+      return;
+    }
+
     setCart((prev) => {
-      const existing = prev.find((item) => item.id === book.id);
+      // Guard: Ensure prev is an array
+      if (!Array.isArray(prev)) {
+        return [{ ...book, qty: 1, addedAt: Date.now() }];
+      }
+
+      const existing = prev.find((item) => item?.id === book.id);
       if (existing) {
         return prev.map((item) =>
-          item.id === book.id ? { ...item, qty: item.qty + 1 } : item
+          item.id === book.id 
+            ? { ...item, qty: (item.qty || 0) + 1 } 
+            : item
         );
       }
       return [...prev, { ...book, qty: 1, addedAt: Date.now() }];
@@ -102,16 +133,22 @@ export const StoreProvider = ({ children }) => {
   const clearCart = () => setCart([]);
 
   const placeOrder = () => {
-    if (cart.length === 0) return;
+    // Guard: Don't place order if cart is empty
+    if (!Array.isArray(cart) || cart.length === 0) {
+      return;
+    }
     
     const newOrder = {
       id: `ORD-${Date.now()}`,
       date: new Date().toISOString(),
-      items: [...cart],
+      items: [...cart], // Create copy to avoid reference issues
       total: cartTotal,
     };
 
-    setOrders(prev => [newOrder, ...prev]);
+    setOrders(prev => {
+      const prevArray = Array.isArray(prev) ? prev : [];
+      return [newOrder, ...prevArray];
+    });
     clearCart();
     setIsCartOpen(false);
     setIsOrdersOpen(true);
@@ -119,27 +156,47 @@ export const StoreProvider = ({ children }) => {
 
   // --- Recently Viewed ---
   const addRecentlyViewed = (book) => {
+    // Guard: Only proceed if book is valid
+    if (!book || typeof book !== 'object' || !book.id) {
+      return;
+    }
+
     setRecentlyViewed(prev => {
-      const filtered = prev.filter(item => item.id !== book.id);
+      // Guard: Ensure prev is an array
+      const prevArray = Array.isArray(prev) ? prev : [];
+      
+      // Remove existing entry if present, then add new one at the front
+      const filtered = prevArray.filter(item => item?.id !== book.id);
       return [
         {
           id: book.id,
-          title: book.title,
-          author: book.author,
-          price: book.price,
-          image: book.image,
-          category: book.category
+          title: book.title || 'Untitled',
+          author: book.author || 'Unknown',
+          price: book.price || 0,
+          image: book.image || '',
+          category: book.category || 'Uncategorized'
         },
         ...filtered
-      ].slice(0, 6);
+      ].slice(0, 6); // Keep only last 6 viewed items
     });
   };
 
   // --- Wishlist Actions ---
   const addToWishlist = (book) => {
+    // Guard: Only proceed if book is valid
+    if (!book || typeof book !== 'object' || !book.id) {
+      return;
+    }
+
     setWishlist((prev) => {
-      if (prev.find((item) => item.id === book.id)) return prev;
-      return [...prev, { ...book, addedAt: Date.now() }];
+      // Guard: Ensure prev is an array
+      const prevArray = Array.isArray(prev) ? prev : [];
+      
+      // Don't add if already in wishlist
+      if (prevArray.find((item) => item?.id === book.id)) {
+        return prevArray;
+      }
+      return [...prevArray, { ...book, addedAt: Date.now() }];
     });
   };
 
@@ -153,12 +210,26 @@ export const StoreProvider = ({ children }) => {
   };
 
   // --- Derived State ---
+  // WHY useMemo: Prevents recalculating totals on every render
+  // Only recalculates when cart array changes
   const cartTotal = useMemo(() => {
-    return cart.reduce((total, item) => total + item.price * item.qty, 0);
+    if (!Array.isArray(cart) || cart.length === 0) {
+      return 0;
+    }
+    return cart.reduce((total, item) => {
+      const price = item?.price || 0;
+      const qty = item?.qty || 0;
+      return total + (price * qty);
+    }, 0);
   }, [cart]);
 
   const cartCount = useMemo(() => {
-    return cart.reduce((count, item) => count + item.qty, 0);
+    if (!Array.isArray(cart) || cart.length === 0) {
+      return 0;
+    }
+    return cart.reduce((count, item) => {
+      return count + (item?.qty || 0);
+    }, 0);
   }, [cart]);
 
   const wishlistCount = wishlist.length;
