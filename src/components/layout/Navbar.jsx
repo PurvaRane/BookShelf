@@ -2,15 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../context/StoreContext';
 import Input from '../../common/Input';
 
-const Navbar = ({ 
-  onNavigate, 
-  searchQuery = '', 
-  setSearchQuery = () => {}, 
-  searchSuggestions = [], 
-  isScrolled: isScrolledProp 
+const Navbar = ({
+  onNavigate,
+  onHistoryClick = () => {},
+  searchQuery = '',
+  setSearchQuery = () => {},
+  searchSuggestions = [],
+  isScrolled: isScrolledProp
 }) => {
+
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
-  const { cartCount, wishlistCount, setIsCartOpen, setIsWishlistOpen } = useStore();
+  const { 
+    cartCount, 
+    wishlistCount, 
+    setIsCartOpen, 
+    setIsWishlistOpen, 
+    setIsOrdersOpen,
+    orders
+  } = useStore();
   const searchContainerRef = useRef(null);
 
   // Close search on click outside
@@ -50,10 +59,48 @@ const Navbar = ({
             </div>
           </button>
 
+
           {/* Icons & Dynamic Search */}
-          <div className="flex items-center gap-3 md:gap-6 bg-transparent">
-             {/* Search Toggle (Only on Scroll) */}
-             <div className={`relative transition-all duration-300 ${isScrolledProp ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'}`} ref={searchContainerRef}>
+          <div className="flex items-center gap-2 md:gap-6 bg-transparent">
+            {/* Orders Tab - Deskop Label + Mobile Icon */}
+            <button
+               onClick={() => setIsOrdersOpen(true)}
+               className="flex items-center gap-1 md:gap-2 p-2 rounded-md hover:bg-[#FAF7F3]/10 transition-colors group relative"
+            >
+               <svg className="w-5 h-5 text-[#FAF7F3] group-hover:text-[#B89B5E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+               </svg>
+               <span className="hidden lg:inline text-[10px] font-bold uppercase tracking-widest text-[#FAF7F3] group-hover:text-[#B89B5E]">Orders</span>
+               {orders.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#2F5D50] text-[#FAF7F3] text-[8px] w-4 h-4 flex items-center justify-center rounded-full shadow-lg border border-[#FAF7F3]/20">
+                    {orders.length}
+                  </span>
+               )}
+            </button>
+
+            {/* Recently Viewed Toggle (Mobile Only) */}
+            <button
+               onClick={onHistoryClick}
+               className="xl:hidden p-2 rounded-md hover:bg-[#FAF7F3]/10 transition-colors group"
+               title="History & Recommendations"
+            >
+              <svg
+                className="w-5 h-5 text-[#FAF7F3] group-hover:text-[#B89B5E]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </button>
+
+             {/* Search Toggle (Always available on mobile, only on scroll on desktop) */}
+             <div className={`relative transition-all duration-300 ${isScrolledProp ? 'opacity-100 translate-x-0' : 'md:opacity-0 md:translate-x-4 md:pointer-events-none'}`} ref={searchContainerRef}>
                <button 
                  onClick={() => setShowSearchOverlay(!showSearchOverlay)}
                  className={`p-2 rounded-full transition-all cursor-pointer border-none bg-transparent ${showSearchOverlay ? 'bg-[#FAF7F3] text-[#5B2C2C]' : 'text-[#FAF7F3] hover:bg-[#FAF7F3]/10'}`}
@@ -65,26 +112,30 @@ const Navbar = ({
 
                {/* Integrated Search Overlay */}
                {showSearchOverlay && (
-                 <div className="absolute top-full right-0 mt-2 w-[280px] md:w-[400px] bg-white rounded-lg shadow-2xl border border-[#E3DDD6] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
-                   <div className="p-3">
-                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <svg className="h-4 w-4 md:h-5 md:w-5 text-[#9A9895]" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                        <Input
-                          autoFocus
-                          placeholder="Fuzzy search books..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="pl-10 py-2 bg-[#FAF7F3] border-[#E3DDD6] focus:border-[#5B2C2C] focus:ring-1 focus:ring-[#5B2C2C] transition-all text-sm w-full"
-                        />
-                     </div>
+                 <div className="fixed md:absolute inset-x-0 top-0 md:top-full md:right-0 md:left-auto md:mt-2 w-full md:w-[400px] h-full md:h-auto bg-white md:rounded-lg shadow-2xl border-b md:border border-[#E3DDD6] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 flex flex-col z-[60]">
+                   <div className="p-4 md:p-3 bg-white">
+                      <div className="flex md:hidden justify-between items-center mb-6">
+                         <h2 className="font-serif text-xl text-[#5B2C2C]">Search Library</h2>
+                         <button onClick={() => setShowSearchOverlay(false)} className="p-2 text-[#9A9895]">✕</button>
+                      </div>
+                      <div className="relative">
+                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                           <svg className="h-5 w-5 text-[#9A9895]" viewBox="0 0 20 20" fill="currentColor">
+                             <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                           </svg>
+                         </div>
+                         <Input
+                           autoFocus
+                           placeholder="Search by title or author..."
+                           value={searchQuery}
+                           onChange={(e) => setSearchQuery(e.target.value)}
+                           className="pl-10 py-3 md:py-2 bg-[#FAF7F3] border-[#E3DDD6] focus:border-[#5B2C2C] focus:ring-1 focus:ring-[#5B2C2C] transition-all text-sm w-full"
+                         />
+                      </div>
                    </div>
 
                    {searchSuggestions.length > 0 && (
-                     <div className="border-t border-[#E3DDD6]">
+                     <div className="border-t border-[#E3DDD6] flex-grow overflow-y-auto bg-white">
                         <p className="px-4 py-2 text-[10px] text-[#9A9895] bg-[#FAF7F3] border-b border-[#E3DDD6] font-bold uppercase tracking-widest">
                           Suggestions
                         </p>
@@ -95,7 +146,7 @@ const Navbar = ({
                               setSearchQuery(item.value);
                               setShowSearchOverlay(false);
                             }}
-                            className="w-full text-left px-4 py-3 text-xs md:text-sm text-[#1F2933] hover:bg-[#FAF7F3] transition-colors border-b border-[#E3DDD6] last:border-b-0"
+                            className="w-full text-left px-4 py-4 md:py-3 text-sm text-[#1F2933] hover:bg-[#FAF7F3] transition-colors border-b border-[#E3DDD6] last:border-b-0"
                           >
                             {item.value}
                           </button>

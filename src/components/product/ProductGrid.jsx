@@ -1,7 +1,7 @@
 import React from 'react';
 import ProductCard from './ProductCard';
 
-const ProductGrid = ({ books }) => {
+const ProductGrid = ({ books, onBookClick }) => {
   if (books.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -19,9 +19,13 @@ const ProductGrid = ({ books }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
       {books.map((book) => (
-        <ProductCard key={book.id} book={book} />
+        <ProductCard 
+          key={book.id} 
+          book={book} 
+          onCardClick={onBookClick}
+        />
       ))}
     </div>
   );

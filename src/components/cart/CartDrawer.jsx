@@ -12,7 +12,8 @@ const CartDrawer = () => {
     removeFromCart, 
     updateQuantity, 
     cartTotal,
-    clearCart
+    clearCart,
+    placeOrder
   } = useStore();
   
   const [sortOption, setSortOption] = useState('date-desc');
@@ -146,7 +147,7 @@ const CartDrawer = () => {
           )}
         </div>
 
-        {/* Footer */}
+         {/* Footer */}
         {cart.length > 0 && (
            <div className="p-6 border-t border-[var(--color-paper-border)] bg-[var(--color-paper-soft)]">
              <div className="flex justify-between items-center mb-6">
@@ -154,7 +155,7 @@ const CartDrawer = () => {
                 <span className="text-2xl font-bold text-[var(--color-text-main)]">{formatPrice(cartTotal)}</span>
              </div>
              <div className="space-y-3">
-               <Button size="lg" className="w-full shadow-lg shadow-indigo-200" onClick={() => alert('Proceeding to checkout...')}>
+               <Button size="lg" className="w-full shadow-lg shadow-indigo-200" onClick={placeOrder}>
                  Checkout Now
                </Button>
                <button 

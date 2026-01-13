@@ -22,7 +22,7 @@ export const StoreProvider = ({ children }) => {
     }
   });
 
-  const [wishlist, setWishlist] = useState(() => {
+   const [wishlist, setWishlist] = useState(() => {
     try {
       const stored = localStorage.getItem('bookshelf_wishlist');
       return stored ? JSON.parse(stored) : [];
@@ -31,8 +31,27 @@ export const StoreProvider = ({ children }) => {
     }
   });
 
+  const [orders, setOrders] = useState(() => {
+    try {
+      const stored = localStorage.getItem('bookshelf_orders');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [recentlyViewed, setRecentlyViewed] = useState(() => {
+    try {
+      const stored = localStorage.getItem('recently_viewed_books');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [isOrdersOpen, setIsOrdersOpen] = useState(false);
 
   // --- Persistence ---
   useEffect(() => {
@@ -42,6 +61,14 @@ export const StoreProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('bookshelf_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
+
+  useEffect(() => {
+    localStorage.setItem('bookshelf_orders', JSON.stringify(orders));
+  }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem('recently_viewed_books', JSON.stringify(recentlyViewed));
+  }, [recentlyViewed]);
 
   // --- Cart Actions ---
   const addToCart = (book) => {
@@ -54,8 +81,6 @@ export const StoreProvider = ({ children }) => {
       }
       return [...prev, { ...book, qty: 1, addedAt: Date.now() }];
     });
-    // Optional: Open cart on add? Or just show badge update? 
-    // Let's NOT auto-open to keep flow smooth, maybe just a toast in future.
   };
 
   const removeFromCart = (bookId) => {
@@ -66,7 +91,7 @@ export const StoreProvider = ({ children }) => {
     setCart((prev) =>
       prev.map((item) => {
         if (item.id === bookId) {
-          const newQty = Math.max(1, item.qty + delta); // Prevent 0, use remove for 0
+          const newQty = Math.max(1, item.qty + delta);
           return { ...item, qty: newQty };
         }
         return item;
@@ -75,6 +100,40 @@ export const StoreProvider = ({ children }) => {
   };
 
   const clearCart = () => setCart([]);
+
+  const placeOrder = () => {
+    if (cart.length === 0) return;
+    
+    const newOrder = {
+      id: `ORD-${Date.now()}`,
+      date: new Date().toISOString(),
+      items: [...cart],
+      total: cartTotal,
+    };
+
+    setOrders(prev => [newOrder, ...prev]);
+    clearCart();
+    setIsCartOpen(false);
+    setIsOrdersOpen(true);
+  };
+
+  // --- Recently Viewed ---
+  const addRecentlyViewed = (book) => {
+    setRecentlyViewed(prev => {
+      const filtered = prev.filter(item => item.id !== book.id);
+      return [
+        {
+          id: book.id,
+          title: book.title,
+          author: book.author,
+          price: book.price,
+          image: book.image,
+          category: book.category
+        },
+        ...filtered
+      ].slice(0, 6);
+    });
+  };
 
   // --- Wishlist Actions ---
   const addToWishlist = (book) => {
@@ -107,14 +166,20 @@ export const StoreProvider = ({ children }) => {
   const value = {
     cart,
     wishlist,
+    orders,
+    recentlyViewed,
     isCartOpen,
     setIsCartOpen,
     isWishlistOpen,
     setIsWishlistOpen,
+    isOrdersOpen,
+    setIsOrdersOpen,
     addToCart,
     removeFromCart,
     updateQuantity,
     clearCart,
+    placeOrder,
+    addRecentlyViewed,
     addToWishlist,
     removeFromWishlist,
     moveToCart,

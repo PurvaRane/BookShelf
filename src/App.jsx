@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import { StoreProvider } from './context/StoreContext';
 import CartDrawer from './components/cart/CartDrawer';
 import WishlistDrawer from './components/wishlist/WishlistDrawer';
+import OrdersDrawer from './components/orders/OrdersDrawer';
 
 function App() {
   const [currentView, setCurrentView] = useState('landing');
@@ -55,6 +56,7 @@ function App() {
       {renderView()}
       <CartDrawer />
       <WishlistDrawer />
+      <OrdersDrawer />
     </StoreProvider>
   );
 }
